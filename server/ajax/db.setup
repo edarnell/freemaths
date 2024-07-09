@@ -1,0 +1,66 @@
+-- first create user and database
+-- CREATE USER 'edarnell'@'localhost' IDENTIFIED BY 'password';
+-- create database freemaths character set utf8 collate utf8_general_ci;
+-- create database fmtest character set utf8 collate utf8_general_ci;
+-- GRANT ALL PRIVILEGES ON freemaths.* TO 'edarnell'@'localhost';
+-- GRANT ALL PRIVILEGES ON fmtest.* TO 'edarnell'@'localhost';
+-- mysql -u edarnell -p then use source db.setup to import this file
+-- or source a database export (can clean old first with truncate table log;truncate table tutors;truncate table meta;truncate table users;)
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+CREATE TABLE `log` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `json` json NOT NULL
+);
+CREATE TABLE `users` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `token` varchar(255) DEFAULT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `uts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+CREATE TABLE `meta` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `type` enum('group','sync','booking') NOT NULL,
+  `json` json DEFAULT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `uts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+CREATE TABLE `tutors` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `type` enum('Parent','Teacher','Tutor','Family','Friend') NOT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `uts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+ALTER TABLE `tutors`
+  ADD PRIMARY KEY (`id`),
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,
+  ADD KEY `tutors_user_id_index` (`user_id`),
+  ADD KEY `tutors_email_index` (`email`);
+ALTER TABLE `log`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `ts` (`ts`);
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `users_email_unique` (`email`);
+ALTER TABLE `meta`
+  ADD PRIMARY KEY (`id`);
+ALTER TABLE `meta`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `log`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `users`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+COMMIT;

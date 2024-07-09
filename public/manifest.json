@@ -1,0 +1,20 @@
+{
+  "short_name": "FreeMaths",
+  "name": "FreeMaths.uk",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "permissions": {
+    "video-capture": {
+      "description": "Required to take photos of working"
+    }
+  },
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
